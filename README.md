@@ -34,6 +34,7 @@ Launch DataGenie by running the Streamlit application:
 ```python
 poetry run streamlit run app.py
 ```
+After completing these steps, Streamlit will start the DataGenie application, and you should be able to access it through your web browser at the address provided in the terminal (typically http://localhost:8501).
 
 ## What to use for
 1. **Explore Your Data**: Upload your datasets and let DataGenie guide you through the EDA process.<br>

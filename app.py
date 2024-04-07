@@ -1,16 +1,14 @@
 import streamlit as st
-from dotenv import load_dotenv
 import pandas as pd
 from utils import clicked, describe_dataframe, to_show, checkbox_clicked, additional_clicked_fun
-from llm import first_look_function, eda_selection_generator, individual_eda, aaa_sample_generator
+from llm import first_look_function, eda_selection_generator, individual_eda, aaa_sample_generator, aaa_answer_generator
 from llm import filled_eda_prompt, filled_aaa_prompt
 from langchain_openai import ChatOpenAI
 from langchain_experimental.agents import create_pandas_dataframe_agent
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
 
-from langchain.agents.initialize import initialize_agent
-
+from dotenv import load_dotenv
 load_dotenv()
 
 # Initialization
@@ -39,6 +37,8 @@ if 'df_details' not in st.session_state:
 
 if 'peda_clicked' not in st.session_state:
     st.session_state.peda_clicked = 0
+
+st.set_page_config(page_title="DataGenie", page_icon="🧞‍♂️")
 
 # LLM Declaration
 llm = ChatOpenAI(model_name='gpt-4-0125-preview')
@@ -110,8 +110,7 @@ if st.session_state.clicked['begin_button']:
             st.write('Hint: Check sidebar for Prompt Inspiration')
             user_prompt = st.text_area('Enter your question here!')
             if user_prompt:
-                answer_to_user = pd_agent.invoke(user_prompt)
-                st.write(answer_to_user['output'])
+                aaa_answer_generator(pd_agent, user_prompt)
 
 
 with st.sidebar:
@@ -148,7 +147,6 @@ with st.sidebar:
                     _dataframe_details = st.session_state.df_details
                     _eda_selection = st.session_state.eda_selection
                     aaa_samples = aaa_sample_generator(aaa_chain, _dataframe_details, _eda_selection)
-                    # st.write(llm.invoke('Give me a list of possible questions that Pandas agent can answer well about the dataframe'))
                     st.write(aaa_samples)
             
     

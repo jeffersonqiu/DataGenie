@@ -3,5 +3,6 @@
 
 /.venv
 /__pycache__
+/data_analyst_project
 
 chart.py

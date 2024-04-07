@@ -135,3 +135,9 @@ filled_aaa_prompt = PipelinePromptTemplate(
 @st.cache_data
 def aaa_sample_generator(_aaa_chain, _dataframe_details, _eda_selection):
     return _aaa_chain.invoke({'dataframe_details': _dataframe_details, 'eda_selection': _eda_selection})['text']
+
+@st.cache_data
+def aaa_answer_generator(_pd_agent, _user_prompt):
+    st_callback = StreamlitCallbackHandler(st.container())
+    answer_to_user = _pd_agent.invoke(_user_prompt, callbacks=[st_callback])
+    st.write(answer_to_user['output'])
