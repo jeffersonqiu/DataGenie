@@ -1,8 +1,8 @@
 import streamlit as st
 import pandas as pd
-from utils import clicked, describe_dataframe, to_show, checkbox_clicked, additional_clicked_fun
-from llm import first_look_function, eda_selection_generator, individual_eda, aaa_sample_generator, aaa_answer_generator
-from llm import filled_eda_prompt, filled_aaa_prompt
+from helpers.utils import clicked, describe_dataframe, to_show, checkbox_clicked, additional_clicked_fun
+from helpers.llm import first_look_function, eda_selection_generator, individual_eda, aaa_sample_generator, aaa_answer_generator
+from helpers.llm import filled_eda_prompt, filled_aaa_prompt
 from langchain.prompts import PromptTemplate
 
 from langchain_openai import ChatOpenAI

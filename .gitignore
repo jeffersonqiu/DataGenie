@@ -5,4 +5,4 @@
 /__pycache__
 /data_analyst_project
 
-chart.py
+helpers/chart.py
