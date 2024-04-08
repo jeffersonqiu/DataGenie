@@ -1,6 +1,15 @@
 # DataGenie 🧞‍♂️
 
+<div style="text-align: center;">
+    <video width="480" height="360" controls>
+    <source src="asset/datagenie_demo.mp4" type="video/mp4">
+    </video>
+</div>
+
+
 Welcome to DataGenie, your ultimate companion for expediting the Exploratory Data Analysis (EDA) process. Built on the robust Streamlit framework and enhanced with the intelligent capabilities of Langchain's OpenAI backend, DataGenie offers a user-friendly platform designed to make your data analytics journey magical.
+
+Try DataGenie yourself: https://jefferson-datagenie.streamlit.app/
 
 ## Features
 - **Efficient EDA:** Rapidly understand your data with powerful, automated analysis.

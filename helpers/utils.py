@@ -7,8 +7,8 @@ def clicked(button):
 def checkbox_clicked(button):
     st.session_state.checkbox_menu[button] = st.session_state.checkbox_menu[button] == False
 
-def additional_clicked_fun():
-    st.session_state.peda_clicked += 1
+def additional_clicked_fun(button):
+    st.session_state.refreshed[button] += 1
 
 @st.cache_data
 def describe_dataframe(df):

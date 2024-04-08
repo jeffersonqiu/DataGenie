@@ -62,6 +62,7 @@ do_not_eda_template = '''
 - Do not provide any suggestion related to visualization.
 - Provide not more than 8 concrete/ not repetitive steps.
 - Do not show Feature Engineering steps
+- Do not generate something that we couldn't answer based on the existing dataframe, i.e. corr values when there is no numerical columns in the dataframe
 '''
 
 dataframe_description_template = '''
@@ -137,7 +138,7 @@ def aaa_sample_generator(_aaa_chain, _dataframe_details, _eda_selection):
     return _aaa_chain.invoke({'dataframe_details': _dataframe_details, 'eda_selection': _eda_selection})['text']
 
 @st.cache_data
-def aaa_answer_generator(_pd_agent, _user_prompt):
+def aaa_answer_generator(_pd_agent, _user_prompt, refreshed):
     st_callback = StreamlitCallbackHandler(st.container())
-    answer_to_user = _pd_agent.invoke(_user_prompt, callbacks=[st_callback])
-    st.write(answer_to_user['output'])
+    answer_to_user = _pd_agent.run(_user_prompt, callbacks=[st_callback])
+    st.write(answer_to_user)

@@ -37,13 +37,16 @@ if 'column_names' not in st.session_state:
 if 'df_details' not in st.session_state:
     st.session_state.df_details = None
 
-if 'peda_clicked' not in st.session_state:
-    st.session_state.peda_clicked = 0
+if 'refreshed' not in st.session_state:
+    st.session_state.refreshed = {
+        'peda_clicked' : 0,
+        'aaa_clicked': 0
+    } 
 
 st.set_page_config(page_title="DataGenie", page_icon="🧞‍♂️")
 
 st.markdown("<h1 style='text-align: center;'>Data Genie 🧞‍♂️</h1>", unsafe_allow_html=True)
-st.text('I am your helpful Data Analyst AI. Feel free to drop your data for me to analyse.')
+st.text('I am your helpful Exploratory Data Analysis Assistant powered by AI. Feel free to drop your data for me to analyse.')
 
 # LLM Declaration
 try:
@@ -103,11 +106,11 @@ if st.session_state.clicked['begin_button']:
 
             eda_selected = st.selectbox('Based on the dataframe, here are the most common EDA steps to perform:', options=eda_list)
             
-            if st.button('Perform EDA', on_click=additional_clicked_fun):
+            if st.button('Perform EDA', on_click=additional_clicked_fun, args=['peda_clicked']):
                 prompt = PromptTemplate.from_template(eda_selected)
                 with st.chat_message('assistant'):
                     if eda_selected != '[Default] Perform default EDA':
-                        individual_eda(pd_agent, eda_selected, st.session_state.peda_clicked)
+                        individual_eda(pd_agent, eda_selected, st.session_state.refreshed['peda_clicked'])
                     else:
                         first_look_function(df, pd_agent)
                     
@@ -124,8 +127,9 @@ if st.session_state.clicked['begin_button']:
             st.subheader("Ask AI Anything")
             st.write('Hint: Check sidebar for Prompt Inspiration')
             user_prompt = st.text_area('Enter your question here!')
-            if user_prompt:
-                aaa_answer_generator(pd_agent, user_prompt)
+            st.button('Ask your question', on_click=additional_clicked_fun, args=['aaa_clicked'])
+            if user_prompt and st.session_state.refreshed['aaa_clicked']:
+                aaa_answer_generator(pd_agent, user_prompt, st.session_state.refreshed['aaa_clicked'])
 
 
 with st.sidebar:

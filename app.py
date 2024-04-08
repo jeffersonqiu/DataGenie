@@ -1,8 +1,8 @@
 import streamlit as st
 import pandas as pd
-from utils import clicked, describe_dataframe, to_show, checkbox_clicked, additional_clicked_fun
-from llm import first_look_function, eda_selection_generator, individual_eda, aaa_sample_generator, aaa_answer_generator
-from llm import filled_eda_prompt, filled_aaa_prompt
+from helpers.utils import clicked, describe_dataframe, to_show, checkbox_clicked, additional_clicked_fun
+from helpers.llm import first_look_function, eda_selection_generator, individual_eda, aaa_sample_generator, aaa_answer_generator
+from helpers.llm import filled_eda_prompt, filled_aaa_prompt
 from langchain_openai import ChatOpenAI
 from langchain_experimental.agents import create_pandas_dataframe_agent
 from langchain.prompts import PromptTemplate
@@ -35,8 +35,11 @@ if 'column_names' not in st.session_state:
 if 'df_details' not in st.session_state:
     st.session_state.df_details = None
 
-if 'peda_clicked' not in st.session_state:
-    st.session_state.peda_clicked = 0
+if 'refreshed' not in st.session_state:
+    st.session_state.refreshed = {
+        'peda_clicked' : 0,
+        'aaa_clicked': 0
+    } 
 
 st.set_page_config(page_title="DataGenie", page_icon="🧞‍♂️")
 
@@ -44,13 +47,13 @@ st.set_page_config(page_title="DataGenie", page_icon="🧞‍♂️")
 llm = ChatOpenAI(model_name='gpt-4-0125-preview')
 
 st.markdown("<h1 style='text-align: center;'>Data Genie 🧞‍♂️</h1>", unsafe_allow_html=True)
-st.text('I am your helpful Data Analyst AI. Feel free to drop your data for me to analyse.')
+st.text('I am your helpful Exploratory Data Analysis Assistant powered by Langchain OpenAI')
 
 col1, col2, col3 = st.columns(3)
 with col2:
     st.button("Let's begin the magic", on_click=clicked, args=['begin_button'])
 
-if st.session_state.clicked['begin_button']:
+if st.session_state.clicked['begin_button']:    
     with st.expander('Upload your .csv data here'):
         data = st.file_uploader(' ', type ='csv')
     if data is not None:
@@ -88,11 +91,11 @@ if st.session_state.clicked['begin_button']:
 
             eda_selected = st.selectbox('Based on the dataframe, here are the most common EDA steps to perform:', options=eda_list)
             
-            if st.button('Perform EDA', on_click=additional_clicked_fun):
+            if st.button('Perform EDA', on_click=additional_clicked_fun, args=['peda_clicked']):
                 prompt = PromptTemplate.from_template(eda_selected)
                 with st.chat_message('assistant'):
                     if eda_selected != '[Default] Perform default EDA':
-                        individual_eda(pd_agent, eda_selected, st.session_state.peda_clicked)
+                        individual_eda(pd_agent, eda_selected, st.session_state.refreshed['peda_clicked'])
                     else:
                         first_look_function(df, pd_agent)
                     
@@ -109,8 +112,9 @@ if st.session_state.clicked['begin_button']:
             st.subheader("Ask AI Anything")
             st.write('Hint: Check sidebar for Prompt Inspiration')
             user_prompt = st.text_area('Enter your question here!')
-            if user_prompt:
-                aaa_answer_generator(pd_agent, user_prompt)
+            st.button('Ask your question', on_click=additional_clicked_fun, args=['aaa_clicked'])
+            if user_prompt and st.session_state.refreshed['aaa_clicked']:
+                aaa_answer_generator(pd_agent, user_prompt, st.session_state.refreshed['aaa_clicked'])
 
 
 with st.sidebar:
@@ -136,7 +140,7 @@ with st.sidebar:
                 if len(st.session_state.eda_selection) != 0:
                     with st.expander('EDA: Suggested Steps'):
                         st.markdown("Navigation: [EDA](#exploratory-data-analysis)", unsafe_allow_html=True)
-                        st.button("Refresh EDA Suggestions", on_click=additional_clicked_fun)
+                        # st.button("Refresh EDA Suggestions", on_click=additional_clicked_fun, args=['eda_selection_clicked'])
                         st.write(st.session_state.eda_selection)
 
 
