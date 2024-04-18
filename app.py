@@ -7,6 +7,10 @@ from langchain_openai import ChatOpenAI
 from langchain_experimental.agents import create_pandas_dataframe_agent
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
+from langchain_core.output_parsers import JsonOutputParser
+
+from helpers.vis import chart_generator, vis_generator
+
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -38,7 +42,8 @@ if 'df_details' not in st.session_state:
 if 'refreshed' not in st.session_state:
     st.session_state.refreshed = {
         'peda_clicked' : 0,
-        'aaa_clicked': 0
+        'aaa_clicked': 0,
+        'va_clicked': 0
     } 
 
 st.set_page_config(page_title="DataGenie", page_icon="🧞‍♂️")
@@ -99,13 +104,19 @@ if st.session_state.clicked['begin_button']:
                     else:
                         first_look_function(df, pd_agent)
                     
-        # if st.session_state.checkbox_menu['va_button']:
-        #     st.divider()
-        #     st.subheader("Variable of Interest")
-        #     user_question = st.selectbox("What variable are you interested in exploring?", options = st.session_state.column_names)
-        #     st.write(user_question)
-
-            
+        if st.session_state.checkbox_menu['va_button']:
+            st.divider()
+            st.subheader("Visualization")
+            user_question_vis = st.text_area("Tell me what you want to visualize/ investigate!")
+            st.button('Start Visualization', on_click=additional_clicked_fun, args=['va_clicked'])
+            if user_question_vis and st.session_state.refreshed['va_clicked']:
+                with st.spinner("Generating Chart Type"):
+                    chart = chart_generator(llm, df, user_question_vis)
+                st.write("Chart to be Produced:")
+                st.write(chart)
+                with st.spinner("Performing Feature Engineering and Charting!"):
+                    vis_generator(chart[0], llm, df)
+           
 
         if st.session_state.checkbox_menu['aaa_button']:
             st.divider()
@@ -126,7 +137,7 @@ with st.sidebar:
             show_data_button = st.checkbox('Show Data', True, on_change=checkbox_clicked, args=['show_data_button'])
             eda_button = st.checkbox('Exploratory Data Analysis', True, on_change=checkbox_clicked, args=['eda_button'])
                 
-            # va_button = st.checkbox('Variable Analysis', True, on_change=checkbox_clicked, args=['va_button'])
+            va_button = st.checkbox('Visualization', True, on_change=checkbox_clicked, args=['va_button'])
             aaa_button = st.checkbox('Ask AI Anything!', True, on_change=checkbox_clicked, args=['aaa_button'])
 
             st.divider()
