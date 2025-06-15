@@ -121,12 +121,12 @@ do_not_aaa_template = '''
 
 intro_aaa_prompt = PromptTemplate.from_template(intro_aaa_template)
 dataframe_description_aaa_prompt = PromptTemplate.from_template(dataframe_description_aaa_template)
-do_not_eda_prompt = PromptTemplate.from_template(do_not_aaa_template)
+do_not_aaa_prompt = PromptTemplate.from_template(do_not_aaa_template)
 
 input_aaa_prompts = [
     ("intro", intro_aaa_prompt),
     ("dataframe_description", dataframe_description_aaa_prompt),
-    ("do_not_list", do_not_eda_prompt),
+    ("do_not_list", do_not_aaa_prompt),
 ]
 
 filled_aaa_prompt = PipelinePromptTemplate(
